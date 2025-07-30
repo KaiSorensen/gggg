@@ -227,64 +227,9 @@ Details:
     
     return response
 
-@mcp.tool()
-async def check_multiple_domains(domains: List[str]) -> str:
-    """Check availability for multiple domain names at once
-    
-    This MCP tool demonstrates how to handle batch operations efficiently
-    using asyncio.gather for concurrent execution.
-    """
-    if not domains:
-        return "Error: Domain list is required"
-    
-    # Check domains concurrently for better performance
-    # This is important for MCP servers to avoid blocking on multiple operations
-    tasks = [domain_checker.check_domain_availability(domain) for domain in domains]
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-    
-    # Handle any exceptions in the results
-    processed_results = []
-    for i, result in enumerate(results):
-        if isinstance(result, Exception):
-            processed_results.append({
-                "domain": domains[i],
-                "available": None,
-                "error": str(result)
-            })
-        else:
-            processed_results.append(result)
-    
-    # Format results as a table
-    response = "Domain Availability Check Results:\n\n"
-    for result in processed_results:
-        if result["available"] is True:
-            status = "✅ LIKELY AVAILABLE"
-        elif result["available"] is False:
-            status = "❌ NOT AVAILABLE"
-        else:
-            status = "❓ UNCLEAR"
-        
-        response += f"{result['domain']:<30} {status}\n"
-    
-    response += f"\nDetailed results:\n{json.dumps(processed_results, indent=2)}"
-    
-    return response
-
-# MCP RESOURCES
-# Resources are data that can be accessed by MCP clients using URIs
-# They provide a way to expose structured data through the MCP protocol
-
-@mcp.resource("domain://check/{domain}")
-async def domain_info_resource(domain: str) -> str:
-    """Get domain availability information as a resource
-    
-    This MCP resource allows clients to access domain data using a URI like:
-    domain://check/example.com
-    
-    Resources return raw data (JSON) rather than formatted strings.
-    """
-    result = await domain_checker.check_domain_availability(domain)
-    return json.dumps(result, indent=2)
+@mcp.tool("hello")
+async def hello() -> str:
+    return f"hello"
 
 # MCP SERVER STARTUP
 # This section configures and starts the MCP server
