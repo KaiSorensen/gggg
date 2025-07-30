@@ -1,9 +1,12 @@
 spec:
-  name: gggg
-  region: sfo
+  name: do-remote-mcp-server-template
+  region: nyc
   services:
-    - name: gggg
+    - name: do-remote-mcp-server-template
       environment_slug: python
+      git:
+        branch: main
+        repo_clone_url: https://github.com/do-community/do-remote-mcp-server-template
       build_command: pip install -r requirements.txt
       run_command: python domain-checker.py
       http_port: 8080
